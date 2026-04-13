@@ -1,0 +1,57 @@
+@import "tailwindcss";
+@import "./styles/tokens.css";
+
+@theme {
+  /* Canvas */
+  --color-canvas: var(--canvas);
+
+  /* Gold palette */
+  --color-gold-solid: var(--gold-solid);
+  --color-gold-highlight: var(--gold-highlight);
+  --color-gold-shadow: var(--gold-shadow);
+  --color-gold-mid: var(--gold-mid);
+
+  /* Neutrals */
+  --color-silver-solid: var(--silver-solid);
+  --color-body-text: var(--body-text);
+  --color-labels: var(--labels);
+  --color-eyebrows: var(--eyebrows);
+  --color-deep-text: var(--deep-text);
+
+  /* Surfaces */
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-weekend: var(--surface-weekend);
+
+  /* State */
+  --color-amber-tint: var(--amber-tint);
+  --color-gold-tint: var(--gold-tint);
+  --color-rose: var(--rose);
+
+  /* Fonts */
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+/* Base styles */
+html {
+  background-color: var(--canvas);
+  color: var(--body-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+/* Gold gradient text utility */
+.text-gold-gradient {
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

@@ -1,0 +1,43 @@
+/* ============================================
+   Freelog — DBF Nexus Brand Tokens 2026
+   ============================================
+   Never hardcode colors in components.
+   Use these CSS variables everywhere.
+   ============================================ */
+
+:root {
+  /* Canvas */
+  --canvas: #020617;
+
+  /* Gold palette */
+  --gold-solid: #e8c547;
+  --gold-highlight: #faecb4;
+  --gold-shadow: #5a4418;
+  --gold-mid: #a8822c;
+
+  /* Neutrals */
+  --silver-solid: #e0e0e6;
+  --white: #ffffff;
+  --body-text: #9ca3af;
+  --labels: #64748b;
+  --eyebrows: #cbd5e1;
+  --deep-text: #141418;
+
+  /* Surfaces */
+  --surface: #0f172a;
+  --surface-elevated: #1e293b;
+  --surface-weekend: #0a0f1a;
+
+  /* State colors */
+  --amber-tint: rgba(232, 197, 71, 0.08);
+  --gold-tint: rgba(232, 197, 71, 0.06);
+  --rose: #f43f5e;
+
+  /* Gold gradient */
+  --gold-gradient: linear-gradient(135deg, #5a4418 0%, #a8822c 15%, #e8c547 32%, #faecb4 50%, #e8c547 68%, #a8822c 85%, #5a4418 100%);
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}

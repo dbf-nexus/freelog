@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(mv:*)",
+      "Bash(npx --yes create-vite@latest tmp_scaffold --template react-ts)",
+      "Bash(cp -r tmp_scaffold/* .)",
+      "Bash(cp tmp_scaffold/.gitignore .)",
+      "Bash(rm -rf tmp_scaffold)",
+      "Bash(mv README.bak README.md)",
+      "Bash(npm install:*)"
+    ]
+  }
+}
