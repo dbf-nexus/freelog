@@ -8,7 +8,9 @@
       "Bash(cp tmp_scaffold/.gitignore .)",
       "Bash(rm -rf tmp_scaffold)",
       "Bash(mv README.bak README.md)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(node -e ':*)",
+      "Bash(npm run:*)"
     ]
   }
 }
