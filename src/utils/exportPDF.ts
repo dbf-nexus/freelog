@@ -1,5 +1,3 @@
-﻿import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
 import type { Settings, MonthData, MonthFavourites } from '../types'
 import { getDaysInMonth, getDayName, getMonthName, isWeekend } from './dateUtils'
 import { calcTimeHours, calcActivityTotal, isDiscrepancy, countWorkingDaysRemaining } from '../hooks/useCalculations'
@@ -10,8 +8,6 @@ export function exportPDF(
   favourites: MonthFavourites,
   month: number,
 ) {
-  const doc = new jsPDF({ orientation: 'landscape', format: 'a4' })
-  const pageWidth = doc.internal.pageSize.getWidth()
   const monthName = getMonthName(month)
   const daysInMonth = getDaysInMonth(settings.year, month)
   const monthData = data[month] ?? {}
@@ -21,24 +17,6 @@ export function exportPDF(
   const today = new Date()
   const exportDate = `${String(today.getDate()).padStart(2, '0')}.${String(today.getMonth() + 1).padStart(2, '0')}.${today.getFullYear()}`
 
-  // Page header
-  doc.setFontSize(20)
-  doc.setFont('helvetica', 'bold')
-  doc.text('FREELOG', 14, 18)
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'normal')
-  doc.text(settings.name, 14, 25)
-  if (settings.company) doc.text(settings.company, 14, 30)
-
-  doc.setFontSize(11)
-  doc.setFont('helvetica', 'bold')
-  doc.text(`${monthName} ${settings.year}`, pageWidth - 14, 18, { align: 'right' })
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  doc.text(`Monthly Goal: ${settings.monthlyTarget}h`, pageWidth - 14, 24, { align: 'right' })
-  doc.text(`Export date: ${exportDate}`, pageWidth - 14, 29, { align: 'right' })
-
-  // Summary calculations
   let totalLogged = 0
   for (let d = 1; d <= daysInMonth; d++) {
     if (monthData[d]) totalLogged += calcTimeHours(monthData[d])
@@ -47,38 +25,16 @@ export function exportPDF(
   const remaining = Math.max(0, settings.monthlyTarget - totalLogged)
   const workDaysLeft = countWorkingDaysRemaining(settings.year, month)
   const avgNeeded = workDaysLeft > 0 ? Math.round((remaining / workDaysLeft) * 10) / 10 : 0
-  const startY = settings.company ? 36 : 33
 
-  // Summary table — functional API, capture result for finalY
-  const summaryResult = autoTable(doc, {
-    startY,
-    body: [
-      ['Monthly goal', `${settings.monthlyTarget}h`],
-      ['Total logged', `${totalLogged}h`],
-      ['Hours remaining', `${remaining}h`],
-      ['Working days left', String(workDaysLeft)],
-      ['Avg hrs/day needed', `${avgNeeded}h`],
-    ],
-    theme: 'plain',
-    styles: { fontSize: 8, cellPadding: 1.5 },
-    columnStyles: { 0: { fontStyle: 'bold', cellWidth: 40 }, 1: { cellWidth: 30 } },
-    margin: { left: 14 },
-    tableWidth: 70,
-    showHead: false,
-  })
-
-  // Build column headers
-  const headers: string[] = ['Date', 'Day']
+  // Build shift column headers
+  const shiftHeaders: string[] = []
   for (let s = 0; s < settings.shifts; s++) {
-    headers.push(settings.shifts > 1 ? `Start ${s + 1}` : 'Start')
-    headers.push(settings.shifts > 1 ? `End ${s + 1}` : 'End')
+    shiftHeaders.push(settings.shifts > 1 ? `Start ${s + 1}` : 'Start')
+    shiftHeaders.push(settings.shifts > 1 ? `End ${s + 1}` : 'End')
   }
-  headers.push('Break', 'Time \u03A3')
-  for (const act of favActivities) headers.push(act.label)
-  headers.push('Act \u03A3')
 
-  // Build body rows
-  const bodyRows: (string | number)[][] = []
+  // Build table rows
+  let tableRows = ''
   let monthTimeTotal = 0
   let monthActTotal = 0
   const monthActTotals: Record<string, number> = {}
@@ -88,94 +44,136 @@ export function exportPDF(
     const isWE = isWeekend(settings.year, month, d)
     const dayName = getDayName(settings.year, month, d)
     const entry = monthData[d]
+    const ds = `${String(d).padStart(2, '0')}.${String(month + 1).padStart(2, '0')}.`
 
     if (isWE || !entry) {
-      const row: (string | number)[] = [String(d), dayName]
       const emptyCols = settings.shifts * 2 + 1 + 1 + favActivities.length + 1
-      for (let c = 0; c < emptyCols; c++) row.push('')
-      bodyRows.push(row)
+      const rowStyle = isWE ? ' class="weekend"' : ''
+      tableRows += `<tr${rowStyle}><td>${ds}</td><td>${dayName}</td>${'<td></td>'.repeat(emptyCols)}</tr>\n`
       continue
     }
 
     const disc = isDiscrepancy(entry)
-    const row: (string | number)[] = [disc ? `! ${d}` : String(d), dayName]
+    const timeH = calcTimeHours(entry)
+    const actH = calcActivityTotal(entry)
+    monthTimeTotal += timeH
+
+    let shiftCells = ''
     for (let s = 0; s < settings.shifts; s++) {
       const block = entry.timeBlocks[s]
-      row.push(block?.start || '')
-      row.push(block?.end || '')
+      shiftCells += `<td>${block?.start || ''}</td><td>${block?.end || ''}</td>`
     }
-    row.push(entry.breakMinutes > 0 ? entry.breakMinutes : '')
-    const timeH = calcTimeHours(entry)
-    row.push(timeH > 0 ? timeH.toFixed(2) : '')
-    monthTimeTotal += timeH
+
+    let actCells = ''
     for (const act of favActivities) {
       const h = entry.activityHours[act.id] || 0
-      row.push(h > 0 ? h.toFixed(2) : '')
       monthActTotals[act.id] += h
+      actCells += `<td>${h > 0 ? h.toFixed(1) : ''}</td>`
     }
-    const actH = calcActivityTotal(entry)
-    row.push(actH > 0 ? actH.toFixed(2) : '')
     monthActTotal += actH
-    bodyRows.push(row)
+
+    const rowClass = disc ? ' class="disc"' : ''
+    const dateCell = disc ? `<td><strong>! ${ds}</strong></td>` : `<td>${ds}</td>`
+
+    tableRows += `<tr${rowClass}>${dateCell}<td>${dayName}</td>${shiftCells}<td>${entry.breakMinutes > 0 ? entry.breakMinutes : ''}</td><td class="sigma">${timeH > 0 ? timeH.toFixed(2) : ''}</td>${actCells}<td class="sigma">${actH > 0 ? actH.toFixed(2) : ''}</td></tr>\n`
   }
 
   // Total row
-  const totalRow: (string | number)[] = ['TOTAL', '']
-  for (let s = 0; s < settings.shifts; s++) totalRow.push('', '')
-  totalRow.push('')
-  totalRow.push((Math.round(monthTimeTotal * 100) / 100).toFixed(2))
+  let totalActCells = ''
   for (const act of favActivities) {
     const t = monthActTotals[act.id]
-    totalRow.push(t > 0 ? (Math.round(t * 100) / 100).toFixed(2) : '')
+    totalActCells += `<td>${t > 0 ? (Math.round(t * 100) / 100).toFixed(2) : ''}</td>`
   }
-  totalRow.push((Math.round(monthActTotal * 100) / 100).toFixed(2))
-  bodyRows.push(totalRow)
+  tableRows += `<tr class="total-row"><td colspan="${2 + settings.shifts * 2 + 2}"><strong>MONTHLY TOTAL</strong></td><td class="sigma"><strong>${(Math.round(monthTimeTotal * 100) / 100).toFixed(2)}</strong></td>${totalActCells}<td class="sigma"><strong>${(Math.round(monthActTotal * 100) / 100).toFixed(2)}</strong></td></tr>\n`
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const tableStartY = (summaryResult as any).lastAutoTable.finalY + 6
+  // Shift column headers
+  const shiftHeaderCells = shiftHeaders.map(h => `<th>${h}</th>`).join('')
+  const actHeaderCells = favActivities.map(a => `<th>${a.label}</th>`).join('')
 
-  // Main timesheet table
-  autoTable(doc, {
-    startY: tableStartY,
-    head: [headers],
-    body: bodyRows,
-    theme: 'striped',
-    styles: { fontSize: 7, cellPadding: 1.5, overflow: 'linebreak' },
-    headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 6.5 },
-    alternateRowStyles: { fillColor: [245, 245, 248] },
-    margin: { left: 14, right: 14 },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    didParseCell: (hookData: any) => {
-      const { section, row, cell } = hookData
-      if (section !== 'body') return
-      const rowIdx = row.index
-      const d = rowIdx + 1
-      if (rowIdx === bodyRows.length - 1) {
-        cell.styles.fontStyle = 'bold'
-        cell.styles.fillColor = [230, 230, 235]
-        return
-      }
-      if (d <= daysInMonth && isWeekend(settings.year, month, d)) {
-        cell.styles.fillColor = [235, 235, 240]
-        cell.styles.fontStyle = 'italic'
-        cell.styles.textColor = [150, 150, 160]
-        return
-      }
-      if (monthData[d] && isDiscrepancy(monthData[d])) {
-        cell.styles.fillColor = [255, 248, 225]
-      }
-    },
-    didDrawPage: () => {
-      const pageHeight = doc.internal.pageSize.getHeight()
-      doc.setFontSize(7)
-      doc.setFont('helvetica', 'normal')
-      doc.setTextColor(130, 130, 140)
-      doc.text(`Generated by Freelog — freelog.dbf-nexus.com | Developed by DBF Nexus | ${exportDate}`, 14, pageHeight - 12)
-      doc.text('This document serves as a monthly work time record.', 14, pageHeight - 8)
-      doc.setTextColor(0, 0, 0)
-    },
-  })
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Freelog — ${monthName} ${settings.year}</title>
+<style>
+  @page { size: A4 landscape; margin: 12mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; font-size: 8pt; color: #000; }
+  .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8mm; padding-bottom: 4mm; border-bottom: 1px solid #ccc; }
+  .page-header h1 { font-size: 18pt; font-weight: 700; letter-spacing: -0.5px; }
+  .page-header h1 span { color: #b8960c; }
+  .meta-left p { font-size: 8pt; color: #555; line-height: 1.6; }
+  .meta-right { text-align: right; font-size: 8pt; color: #555; line-height: 1.6; }
+  .summary { display: flex; gap: 8mm; margin-bottom: 6mm; }
+  .summary-item { border: 1px solid #ddd; border-radius: 4px; padding: 3mm 4mm; min-width: 28mm; }
+  .summary-item .lbl { font-size: 6pt; text-transform: uppercase; color: #888; letter-spacing: 0.3px; }
+  .summary-item .val { font-size: 12pt; font-weight: 700; color: #000; }
+  table { width: 100%; border-collapse: collapse; font-size: 7pt; }
+  th { background: #1a1a2e; color: #fff; font-weight: 600; padding: 2mm 1.5mm; text-align: center; font-size: 6.5pt; white-space: nowrap; border: 0.5px solid #333; }
+  td { padding: 1.5mm 1.5mm; text-align: center; border: 0.5px solid #e0e0e0; }
+  tr:nth-child(even) { background: #f8f8f8; }
+  tr.weekend td { background: #eeeeee; color: #888; font-style: italic; }
+  tr.disc td { background: #fff8e1; }
+  tr.disc td:first-child { border-left: 2px solid #e6a817; }
+  tr.total-row td { background: #e8e8e8; font-weight: 700; border-top: 1.5px solid #999; }
+  td.sigma { background: #f0f4ff; font-weight: 600; }
+  .print-footer { margin-top: 6mm; padding-top: 3mm; border-top: 1px solid #ddd; font-size: 6.5pt; color: #888; text-align: center; line-height: 1.6; }
+  @media print { .no-print { display: none; } }
+  .print-btn { position: fixed; top: 10px; right: 10px; padding: 8px 18px; background: #b8960c; color: #fff; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+</style>
+</head>
+<body>
+<button class="print-btn no-print" onclick="window.print()">Save as PDF</button>
+<div class="page-header">
+  <div class="meta-left">
+    <h1>Free<span>log</span></h1>
+    <p>${settings.name}${settings.company ? ` &mdash; ${settings.company}` : ''}</p>
+  </div>
+  <div class="meta-right">
+    <p><strong>${monthName} ${settings.year}</strong></p>
+    <p>Monthly goal: ${settings.monthlyTarget}h</p>
+    <p>Export date: ${exportDate}</p>
+  </div>
+</div>
 
-  const fileName = `Freelog_${settings.name.replace(/\s+/g, '_')}_${monthName}_${settings.year}.pdf`
-  doc.save(fileName)
+<div class="summary">
+  <div class="summary-item"><div class="lbl">Monthly goal</div><div class="val">${settings.monthlyTarget}h</div></div>
+  <div class="summary-item"><div class="lbl">Total logged</div><div class="val">${totalLogged}h</div></div>
+  <div class="summary-item"><div class="lbl">Hours remaining</div><div class="val">${remaining}h</div></div>
+  <div class="summary-item"><div class="lbl">Working days left</div><div class="val">${workDaysLeft}</div></div>
+  <div class="summary-item"><div class="lbl">Avg hrs/day needed</div><div class="val">${avgNeeded}h</div></div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Day</th>
+      ${shiftHeaderCells}
+      <th>Break (min)</th>
+      <th>Time &Sigma;</th>
+      ${actHeaderCells}
+      <th>Act &Sigma;</th>
+    </tr>
+  </thead>
+  <tbody>
+    ${tableRows}
+  </tbody>
+</table>
+
+<div class="print-footer">
+  Generated by Freelog &mdash; freelog.dbf-nexus.com &nbsp;|&nbsp; Developed by DBF Nexus &nbsp;|&nbsp; ${exportDate}<br>
+  This document serves as a monthly work time record.
+</div>
+</body>
+</html>`
+
+  const printWindow = window.open('', '_blank', 'width=1200,height=800')
+  if (!printWindow) {
+    alert('Please allow popups for freelog.dbf-nexus.com to export PDF.')
+    return
+  }
+  printWindow.document.write(html)
+  printWindow.document.close()
+  printWindow.focus()
 }

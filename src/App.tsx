@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef } from 'react'
+﻿import { useEffect, useCallback, useRef } from 'react'
 import { useSettings } from './hooks/useSettings'
 import { useMonthData } from './hooks/useMonthData'
 import { useFavourites } from './hooks/useFavourites'
@@ -87,13 +87,7 @@ function App() {
 
   const handleExportPDF = async (month: number) => {
     if (!settings) return
-    // jspdf-autotable patches the jsPDF prototype on import; await both in
-    // parallel so the plugin is applied before exportPDF calls `new jsPDF()`.
-    const [{ exportPDF }] = await Promise.all([
-      loadExportPDF(),
-      import('jspdf'),
-      import('jspdf-autotable'),
-    ])
+    const { exportPDF } = await loadExportPDF()
     exportPDF(settings, data, favourites, month)
     handleToast('PDF exported')
   }
