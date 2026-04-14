@@ -1,4 +1,4 @@
-import jsPDF from 'jspdf'
+﻿import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import type { Settings, MonthData, MonthFavourites } from '../types'
 import { getDaysInMonth, getDayName, getMonthName, isWeekend } from './dateUtils'
@@ -144,7 +144,8 @@ export function exportPDF(
     headStyles: { fillColor: [15, 23, 42], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 6.5 },
     alternateRowStyles: { fillColor: [245, 245, 248] },
     margin: { left: 14, right: 14 },
-    didParseCell: (hookData: { section: string; row: { index: number }; cell: { styles: Record<string, unknown> } }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    didParseCell: (hookData: any) => {
       const { section, row, cell } = hookData
       if (section !== 'body') return
       const rowIdx = row.index
