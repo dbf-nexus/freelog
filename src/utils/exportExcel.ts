@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx'
+import * as XLSX from 'xlsx-js-style'
 import type { Settings, MonthData, MonthFavourites } from '../types'
 import { getDaysInMonth, getDayName, getMonthName, isWeekend } from './dateUtils'
 import { calcTimeHours, calcActivityTotal } from '../hooks/useCalculations'

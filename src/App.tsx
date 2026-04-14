@@ -87,7 +87,13 @@ function App() {
 
   const handleExportPDF = async (month: number) => {
     if (!settings) return
-    const { exportPDF } = await loadExportPDF()
+    // jspdf-autotable patches the jsPDF prototype on import; await both in
+    // parallel so the plugin is applied before exportPDF calls `new jsPDF()`.
+    const [{ exportPDF }] = await Promise.all([
+      loadExportPDF(),
+      import('jspdf'),
+      import('jspdf-autotable'),
+    ])
     exportPDF(settings, data, favourites, month)
     handleToast('PDF exported')
   }
