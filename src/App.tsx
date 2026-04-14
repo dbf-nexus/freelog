@@ -1,6 +1,9 @@
 import { useSettings } from './hooks/useSettings'
 import { useMonthData } from './hooks/useMonthData'
 import { useFavourites } from './hooks/useFavourites'
+// Lazy-loaded to keep initial bundle small
+const loadExportExcel = () => import('./utils/exportExcel')
+const loadExportPDF = () => import('./utils/exportPDF')
 import OnboardingWizard from './components/OnboardingWizard'
 import MainView from './components/MainView'
 import type { Settings } from './types'
@@ -16,9 +19,19 @@ function App() {
     setMonthFavourites(currentMonth, favouriteIds)
   }
 
-  // Placeholder — will be implemented in Task 2
-  const handleExportExcel = () => {}
-  const handleExportPDF = (_month: number) => {}
+  const handleExportExcel = async () => {
+    if (!settings) return
+    const { exportExcel } = await loadExportExcel()
+    exportExcel(settings, data, favourites)
+    handleToast('Excel exported')
+  }
+
+  const handleExportPDF = async (month: number) => {
+    if (!settings) return
+    const { exportPDF } = await loadExportPDF()
+    exportPDF(settings, data, favourites, month)
+    handleToast('PDF exported')
+  }
 
   // Placeholder — will be replaced by toast system in Task 3
   const handleToast = (_message: string) => {}
