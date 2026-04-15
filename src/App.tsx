@@ -20,6 +20,7 @@ function App() {
   const { favourites, setMonthFavourites } = useFavourites()
   const { toasts, addToast, dismissToast } = useToast()
   const backupChecked = useRef(false)
+  const prefillHandled = useRef(false)
 
   const handleToast = useCallback(
     (message: string, options?: { action?: { label: string; onClick: () => void }; duration?: number }) => {
@@ -73,6 +74,60 @@ function App() {
       }, 2000)
     }
   }, [settings, addToast])
+
+  // Prefill from marketing page trial — runs once on first mount after settings load
+  useEffect(() => {
+    if (prefillHandled.current || !settings) return
+    const params = new URLSearchParams(window.location.search)
+    const prefill = params.get('prefill')
+    if (!prefill) return
+    prefillHandled.current = true
+
+    const entries = prefill
+      .split(',')
+      .map(e => {
+        const [act, cat, hrs] = decodeURIComponent(e).split('|')
+        return {
+          act: act?.trim() ?? '',
+          cat: cat?.trim() ?? '',
+          hrs: parseFloat(hrs) || 0,
+        }
+      })
+      .filter(e => e.act && e.hrs > 0)
+
+    if (entries.length === 0) {
+      window.history.replaceState({}, '', window.location.pathname)
+      return
+    }
+
+    const today = new Date()
+    const month = today.getMonth()
+    const day = today.getDate()
+
+    entries.forEach(entry => {
+      const act =
+        settings.activities.find(
+          a => a.label.toLowerCase() === entry.cat.toLowerCase(),
+        ) ?? settings.activities[0]
+      if (!act) return
+
+      const existing = data[month]?.[day] ?? {
+        timeBlocks: [],
+        breakMinutes: 0,
+        activityHours: {},
+      }
+      setDay(month, day, {
+        ...existing,
+        activityHours: {
+          ...existing.activityHours,
+          [act.id]: (existing.activityHours?.[act.id] ?? 0) + entry.hrs,
+        },
+      })
+    })
+
+    addToast('We pre-filled today with your trial entries.')
+    window.history.replaceState({}, '', window.location.pathname)
+  }, [settings, data, setDay, addToast])
 
   const handleOnboardingComplete = (newSettings: Settings, favouriteIds: string[]) => {
     setSettings(newSettings)
