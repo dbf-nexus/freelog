@@ -4,39 +4,225 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#020617" />
-    <meta name="description" content="Freelog — Your hours. Your proof. Your freedom. Free monthly timesheet PWA for freelancers." />
+
+    <!-- Primary SEO -->
+    <title>Freelog — Free Timesheet for Freelancers | Track Hours & Export PDF</title>
+    <meta name="description" content="Free monthly timesheet for freelancers. Log daily hours, split by project activity, and export a professional billing-ready PDF. No account, no subscription, works offline." />
+    <meta name="keywords" content="free timesheet freelancer, free time tracker freelancer, freelance hour tracker, billing timesheet free, work hours tracker no account, free time tracking app, timesheet PDF export, freelancer invoice hours, monthly timesheet tool, track billable hours free" />
+    <meta name="author" content="DBF Nexus" />
+    <meta name="application-name" content="Freelog" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://freelog.dbf-nexus.com/" />
+
+    <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-    <title>Freelog — Your hours. Your proof. Your freedom.</title>
-    <meta property="og:title" content="Freelog — Your hours. Your proof. Your freedom." />
-    <meta property="og:description" content="Free monthly timesheet PWA for freelancers. Track hours, split by activity, export billing-ready PDF. No account required." />
-    <meta property="og:image" content="https://freelog.dbf-nexus.com/og-image.png" />
-    <meta property="og:url" content="https://freelog.dbf-nexus.com" />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:title" content="Freelog — Free Timesheet for Freelancers" />
+    <meta property="og:description" content="Free monthly timesheet for freelancers. Log hours, split by project, export billing-ready PDF. No account required." />
+    <meta property="og:url" content="https://freelog.dbf-nexus.com" />
+    <meta property="og:image" content="https://freelog.dbf-nexus.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Freelog by DBF Nexus" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Freelog — Free Timesheet for Freelancers" />
+    <meta name="twitter:description" content="Free monthly timesheet for freelancers. Log hours, split by project, export billing-ready PDF. No account required." />
     <meta name="twitter:image" content="https://freelog.dbf-nexus.com/og-image.png" />
+    <meta name="twitter:creator" content="@DbfNexus" />
+    <meta name="twitter:site" content="@DbfNexus" />
+
+    <!-- SoftwareApplication schema -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
+      "@type": "SoftwareApplication",
       "name": "Freelog",
+      "alternateName": "Freelog Timesheet",
       "url": "https://freelog.dbf-nexus.com",
-      "description": "Free monthly timesheet tool for freelancers. Track hours, split by activity, export billing-ready PDF. No account required.",
+      "description": "Freelog is a free monthly timesheet tool built for freelancers. Log daily working hours, split time across custom project activities, detect billing discrepancies automatically, and export a professional PDF or Excel file for client invoicing. No account required. Works offline as a PWA.",
       "applicationCategory": "BusinessApplication",
+      "applicationSubCategory": "Time Tracking",
       "operatingSystem": "Web, Windows, macOS, Linux, iOS, Android",
+      "browserRequirements": "Requires a modern browser with JavaScript enabled.",
+      "isAccessibleForFree": true,
+      "isFamilyFriendly": true,
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Monthly timesheet with 12-month navigation",
+        "Up to 3 time blocks per day for split schedules",
+        "Custom activity categories per month",
+        "Automatic discrepancy detection between logged hours and activity totals",
+        "Monthly goal tracking with remaining hours calculation",
+        "PDF export — professional A4 landscape billing document",
+        "Excel export with full monthly data",
+        "Offline-first PWA — installs to desktop and works without internet",
+        "No account or registration required",
+        "All data stored locally in the browser",
+        "Weekly auto-backup with Monday reminder"
+      ],
+      "screenshot": "https://freelog.dbf-nexus.com/og-image.png",
+      "publisher": {
+        "@type": "Organization",
+        "name": "DBF Nexus",
+        "url": "https://dbf-nexus.com",
+        "logo": "https://dbf-nexus.com/favicon.svg",
+        "sameAs": [
+          "https://www.linkedin.com/in/bashir-fakih-phd/",
+          "https://github.com/dbf-nexus",
+          "https://x.com/DbfNexus",
+          "https://www.instagram.com/dbfnexus/"
+        ]
       },
       "creator": {
         "@type": "Organization",
         "name": "DBF Nexus",
         "url": "https://dbf-nexus.com"
       }
+    }
+    </script>
+
+    <!-- FAQPage schema — GEO: helps AI engines cite Freelog -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is Freelog really free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Freelog is completely free with no subscription, no account, and no credit card required. It is built and maintained by DBF Nexus as a free tool for the freelance community."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Freelog work offline?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Freelog is an offline-first Progressive Web App (PWA). Once loaded, it works without an internet connection. You can also install it to your desktop or home screen for quick access."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where is my data stored?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All your data is stored locally in your browser's localStorage on your own device. Nothing is sent to any server. Freelog has no backend and no cloud storage."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I export a PDF invoice or timesheet?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Freelog generates a professional A4 landscape PDF timesheet showing your name, company, monthly goal, daily entries, activity breakdown, and totals. You can send it directly to your client as a billing proof document."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is discrepancy detection?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Freelog automatically compares your total logged hours against the sum of your activity hours for each day. If they do not match, the row is highlighted in amber so you can catch and fix billing errors before exporting."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to create an account?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Freelog requires no account, no registration, and no email address. Open the app and start logging immediately."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Freelog open source?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Freelog is open source and available on GitHub under the DBF Nexus organization. The codebase is public and contributions are welcome."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- HowTo schema — GEO: helps AI engines explain Freelog's workflow -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "How to track freelance hours and export a billing PDF using Freelog",
+      "description": "Freelog is a free timesheet tool for freelancers. Follow these steps to log your hours and generate a professional billing document.",
+      "totalTime": "PT2M",
+      "tool": {
+        "@type": "HowToTool",
+        "name": "Freelog",
+        "url": "https://freelog.dbf-nexus.com"
+      },
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Open Freelog",
+          "text": "Go to freelog.dbf-nexus.com in any modern browser. No download or account is needed. Optionally install it to your desktop as a PWA for offline access.",
+          "position": 1
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Set up your profile and goal",
+          "text": "Enter your name, company, monthly hour target, and the activity categories you track time against (for example: Development, Meetings, Design). This takes about 60 seconds on first use.",
+          "position": 2
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Log your hours each day",
+          "text": "For each working day, enter your start and end times. Freelog calculates your daily total automatically. Log your activity breakdown to track where your time goes.",
+          "position": 3
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Export your PDF at month end",
+          "text": "Click Export PDF to generate a professional billing timesheet in A4 landscape format. The document includes your name, company, monthly goal, all daily entries, and totals. Send it directly to your client.",
+          "position": 4
+        }
+      ]
+    }
+    </script>
+
+    <!-- BreadcrumbList schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "DBF Nexus",
+          "item": "https://dbf-nexus.com"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Freelog",
+          "item": "https://freelog.dbf-nexus.com"
+        }
+      ]
     }
     </script>
   </head>
