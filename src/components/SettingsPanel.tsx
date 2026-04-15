@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import type { Settings, Activity, MonthData, MonthFavourites } from '../types'
 import { getMonthName } from '../utils/dateUtils'
+import { InfoIcon } from './Tooltip'
 
 const COLOUR_PRESETS = [
   '#e8c547', '#3b82f6', '#10b981', '#f43f5e',
@@ -291,7 +292,10 @@ export default function SettingsPanel({
                 </div>
               </div>
               <div>
-                <label className="block text-labels text-xs mb-2">Shifts per day</label>
+                <label className="text-labels text-xs mb-2 flex items-center gap-1.5">
+                  Shifts per day
+                  <InfoIcon text="A shift is one continuous block of work — most people work 1 or 2 per day" position="right" />
+                </label>
                 <div className="grid grid-cols-3 gap-2">
                   {([1, 2, 3] as const).map(n => (
                     <button

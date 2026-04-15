@@ -3,6 +3,7 @@ import type { Settings, MonthData, Activity, DayEntry, TimeBlock } from '../type
 import { getDaysInMonth } from '../utils/dateUtils'
 import DayRow from './DayRow'
 import TotalRow from './TotalRow'
+import { InfoIcon } from './Tooltip'
 
 interface Props {
   year: number
@@ -48,7 +49,12 @@ export default function TimesheetTable({
             {Array.from({ length: shifts }, (_, i) => (
               <Fragment key={i}>
                 <th className="px-2 py-2 text-center text-[10px] text-eyebrows uppercase tracking-wider font-medium">
-                  Start {shifts > 1 ? i + 1 : ''}
+                  <span className="inline-flex items-center gap-1 justify-center">
+                    Start {shifts > 1 ? i + 1 : ''}
+                    {i === 0 && (
+                      <InfoIcon text="Enter the time you started and stopped working" />
+                    )}
+                  </span>
                 </th>
                 <th className="px-2 py-2 text-center text-[10px] text-eyebrows uppercase tracking-wider font-medium">
                   End {shifts > 1 ? i + 1 : ''}
@@ -56,10 +62,16 @@ export default function TimesheetTable({
               </Fragment>
             ))}
             <th className="px-2 py-2 text-center text-[10px] text-eyebrows uppercase tracking-wider font-medium">
-              Break
+              <span className="inline-flex items-center gap-1 justify-center">
+                Break
+                <InfoIcon text="Total break time in minutes — e.g. 30 for a half-hour lunch" />
+              </span>
             </th>
             <th className="px-2 py-2 text-center text-[10px] text-gold-solid uppercase tracking-wider font-semibold">
-              Total Hours
+              <span className="inline-flex items-center gap-1 justify-center">
+                Total Hours
+                <InfoIcon text="Hours worked today, calculated from your start/end times minus break" />
+              </span>
             </th>
             {/* Activity headers */}
             {favouriteActivities.map(act => (
@@ -68,11 +80,17 @@ export default function TimesheetTable({
                 className="px-2 py-2 text-center text-[10px] uppercase tracking-wider font-medium"
                 style={{ color: act.colour }}
               >
-                {act.label}
+                <span className="inline-flex items-center gap-1 justify-center">
+                  {act.label}
+                  <InfoIcon text="Log how many hours you spent on this activity today" />
+                </span>
               </th>
             ))}
             <th className="px-2 py-2 text-center text-[10px] text-gold-solid uppercase tracking-wider font-semibold">
-              Activity Total
+              <span className="inline-flex items-center gap-1 justify-center">
+                Activity Total
+                <InfoIcon text="Sum of all your activity hours. Should match Total Hours — any difference is flagged." />
+              </span>
             </th>
           </tr>
         </thead>

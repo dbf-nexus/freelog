@@ -2,6 +2,7 @@ import { Fragment, useCallback } from 'react'
 import type { DayEntry, Activity, TimeBlock } from '../types'
 import { calcTimeHours, calcActivityTotal, isDiscrepancy } from '../hooks/useCalculations'
 import { getDayName, isWeekend, isToday } from '../utils/dateUtils'
+import Tooltip from './Tooltip'
 
 interface Props {
   year: number
@@ -91,7 +92,21 @@ export default function DayRow({
       </td>
 
       {/* Day name */}
-      <td className={`${cellPad} text-xs`}>{dayName}</td>
+      <td className={`${cellPad} text-xs`}>
+        <span className="inline-flex items-center gap-1">
+          {dayName}
+          {discrepancy && (
+            <Tooltip text="Your total hours and activity hours don't match. Check this row." position="right">
+              <span
+                aria-label="Hours discrepancy"
+                className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-gold-solid text-deep-text text-[9px] font-bold cursor-help leading-none"
+              >
+                !
+              </span>
+            </Tooltip>
+          )}
+        </span>
+      </td>
 
       {/* Shift blocks */}
       {Array.from({ length: shifts }, (_, i) => {

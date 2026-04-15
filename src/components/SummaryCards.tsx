@@ -2,6 +2,7 @@ import type { MonthData, Settings } from '../types'
 import { calcTimeHours } from '../hooks/useCalculations'
 import { countWorkingDaysRemaining } from '../hooks/useCalculations'
 import { getDaysInMonth } from '../utils/dateUtils'
+import { InfoIcon } from './Tooltip'
 
 interface Props {
   month: number
@@ -26,7 +27,13 @@ export default function SummaryCards({ month, settings, data }: Props) {
   const avgNeeded = workingDaysLeft > 0 ? remaining / workingDaysLeft : 0
   const avgRounded = Math.round(avgNeeded * 10) / 10
 
-  const cards = [
+  const cards: {
+    label: string
+    value: string
+    accent: boolean
+    warn: boolean
+    tooltip?: string
+  }[] = [
     {
       label: 'Hours logged',
       value: totalLogged.toFixed(1),
@@ -50,6 +57,7 @@ export default function SummaryCards({ month, settings, data }: Props) {
       value: avgRounded.toFixed(1),
       accent: avgRounded > 0 && avgRounded <= 8,
       warn: avgRounded > 8,
+      tooltip: 'How many hours per day you need to work to hit your monthly goal',
     },
     {
       label: 'Monthly target',
@@ -66,8 +74,9 @@ export default function SummaryCards({ month, settings, data }: Props) {
           key={c.label}
           className="bg-surface rounded-xl px-3 py-3 text-center"
         >
-          <p className="text-eyebrows text-[10px] uppercase tracking-wider mb-1">
+          <p className="text-eyebrows text-[10px] uppercase tracking-wider mb-1 flex items-center justify-center gap-1">
             {c.label}
+            {c.tooltip && <InfoIcon text={c.tooltip} position="bottom" />}
           </p>
           <p
             className={`font-display text-2xl font-bold ${
