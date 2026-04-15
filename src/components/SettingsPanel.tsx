@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+﻿import { useState, useRef, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import type { Settings, Activity, MonthData, MonthFavourites } from '../types'
 import { getMonthName } from '../utils/dateUtils'
@@ -61,6 +61,16 @@ export default function SettingsPanel({
   const [restoreError, setRestoreError] = useState('')
 
   const backdropRef = useRef<HTMLDivElement>(null)
+
+  // --- Data: Auto-backup toggle (must be before early return) ---
+  const [autoBackup, setAutoBackup] = useState(
+    () => localStorage.getItem('freelog_auto_backup_enabled') === 'true',
+  )
+  const toggleAutoBackup = () => {
+    const next = !autoBackup
+    setAutoBackup(next)
+    localStorage.setItem('freelog_auto_backup_enabled', String(next))
+  }
 
   if (!open) return null
 
@@ -153,15 +163,6 @@ export default function SettingsPanel({
     onToast('Backup exported')
   }
 
-  // --- Data: Auto-backup toggle ---
-  const [autoBackup, setAutoBackup] = useState(
-    () => localStorage.getItem('freelog_auto_backup_enabled') === 'true',
-  )
-  const toggleAutoBackup = () => {
-    const next = !autoBackup
-    setAutoBackup(next)
-    localStorage.setItem('freelog_auto_backup_enabled', String(next))
-  }
 
   // --- Data: Restore ---
   const handleRestore = (e: React.ChangeEvent<HTMLInputElement>) => {
