@@ -55,3 +55,126 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Tooltip (desktop hover only) */
+.tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tooltip-bubble {
+  position: absolute;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 120ms ease, visibility 120ms ease;
+  transition-delay: 0ms;
+
+  background: #0a0f1e;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  font-family: var(--font-body);
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  padding: 8px 10px;
+  border: 1px solid rgba(232, 197, 71, 0.25);
+  border-radius: 6px;
+  max-width: 220px;
+  width: max-content;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  white-space: normal;
+}
+
+.tooltip-bubble::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+}
+
+.tooltip-top .tooltip-bubble {
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+.tooltip-top .tooltip-bubble::after {
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-top-color: rgba(232, 197, 71, 0.35);
+}
+
+.tooltip-bottom .tooltip-bubble {
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+}
+.tooltip-bottom .tooltip-bubble::after {
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-bottom-color: rgba(232, 197, 71, 0.35);
+}
+
+.tooltip-right .tooltip-bubble {
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+.tooltip-right .tooltip-bubble::after {
+  right: 100%;
+  top: 50%;
+  margin-top: -5px;
+  border-right-color: rgba(232, 197, 71, 0.35);
+}
+
+@media (hover: hover) {
+  .tooltip-wrap:hover .tooltip-bubble,
+  .tooltip-wrap:focus-within .tooltip-bubble {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 150ms;
+  }
+}
+
+/* Info icon trigger */
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  border: 1px solid currentColor;
+  color: #4b5563;
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  line-height: 1;
+  cursor: help;
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0;
+  transition: color 120ms ease;
+  user-select: none;
+}
+
+@media (hover: hover) {
+  .tooltip-wrap:hover .info-icon,
+  .info-icon:hover {
+    color: #e8c547;
+  }
+}
+
+/* Hide tooltips on touch devices entirely */
+@media (hover: none) {
+  .tooltip-bubble {
+    display: none !important;
+  }
+}
