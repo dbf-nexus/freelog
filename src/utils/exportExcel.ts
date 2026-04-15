@@ -33,7 +33,7 @@ export function exportExcel(
       headers.push(settings.shifts > 1 ? `Start ${s + 1}` : 'Start')
       headers.push(settings.shifts > 1 ? `End ${s + 1}` : 'End')
     }
-    headers.push('Break (min)', 'Time Total')
+    headers.push('Break (min)', 'Total Hours')
     for (const act of favActivities) {
       headers.push(act.label)
     }

@@ -151,9 +151,9 @@ export function exportPDF(
       <th>Day</th>
       ${shiftHeaderCells}
       <th>Break (min)</th>
-      <th>Time &Sigma;</th>
+      <th>Total Hours</th>
       ${actHeaderCells}
-      <th>Act &Sigma;</th>
+      <th>Activity Total</th>
     </tr>
   </thead>
   <tbody>

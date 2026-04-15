@@ -59,7 +59,7 @@ export default function TimesheetTable({
               Break
             </th>
             <th className="px-2 py-2 text-center text-[10px] text-gold-solid uppercase tracking-wider font-semibold">
-              Time &Sigma;
+              Total Hours
             </th>
             {/* Activity headers */}
             {favouriteActivities.map(act => (
@@ -72,7 +72,7 @@ export default function TimesheetTable({
               </th>
             ))}
             <th className="px-2 py-2 text-center text-[10px] text-gold-solid uppercase tracking-wider font-semibold">
-              Act &Sigma;
+              Activity Total
             </th>
           </tr>
         </thead>
