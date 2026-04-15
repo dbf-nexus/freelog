@@ -33,24 +33,28 @@ export default function SummaryCards({ month, settings, data }: Props) {
     accent: boolean
     warn: boolean
     tooltip?: string
+    hint: string
   }[] = [
     {
       label: 'Hours logged',
       value: totalLogged.toFixed(1),
       accent: false,
       warn: false,
+      hint: 'from your time entries',
     },
     {
       label: 'Hours remaining',
       value: remaining.toFixed(1),
       accent: remaining > 0,
       warn: false,
+      hint: 'to reach your goal',
     },
     {
       label: 'Working days left',
       value: String(workingDaysLeft),
       accent: false,
       warn: false,
+      hint: 'Mon–Fri from today',
     },
     {
       label: 'Avg hrs/day needed',
@@ -58,12 +62,14 @@ export default function SummaryCards({ month, settings, data }: Props) {
       accent: avgRounded > 0 && avgRounded <= 8,
       warn: avgRounded > 8,
       tooltip: 'How many hours per day you need to work to hit your monthly goal',
+      hint: 'to finish on time',
     },
     {
       label: 'Monthly target',
       value: settings.monthlyTarget.toFixed(0),
       accent: false,
       warn: false,
+      hint: 'set in Settings',
     },
   ]
 
@@ -89,6 +95,7 @@ export default function SummaryCards({ month, settings, data }: Props) {
           >
             {c.value}
           </p>
+          <p className="summary-hint">{c.hint}</p>
         </div>
       ))}
     </div>

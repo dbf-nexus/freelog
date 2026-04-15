@@ -28,6 +28,8 @@ export default function DayRow({
   const discrepancy = isDiscrepancy(entry)
   const timeSigma = calcTimeHours(entry)
   const actSigma = calcActivityTotal(entry)
+  const hasAnyStart = entry.timeBlocks.some(b => b.start)
+  const showEmptyHint = !weekend && !hasAnyStart && timeSigma === 0
   const dayName = getDayName(year, month, day)
 
   const updateTimeBlock = useCallback(
@@ -106,6 +108,9 @@ export default function DayRow({
             </Tooltip>
           )}
         </span>
+        {discrepancy && (
+          <span className="mobile-hint">Hours don't match — check activities</span>
+        )}
       </td>
 
       {/* Shift blocks */}
@@ -152,9 +157,15 @@ export default function DayRow({
         )}
       </td>
 
-      {/* Time Sigma */}
+      {/* Total Hours */}
       <td className={`${cellPad} text-xs font-mono text-center font-medium ${timeSigma > 0 ? 'text-white' : ''}`}>
-        {timeSigma > 0 ? timeSigma.toFixed(2) : ''}
+        {timeSigma > 0 ? (
+          timeSigma.toFixed(2)
+        ) : showEmptyHint ? (
+          <span className="mobile-hint-inline">← enter times</span>
+        ) : (
+          ''
+        )}
       </td>
 
       {/* Activity columns */}

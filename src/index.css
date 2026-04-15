@@ -178,3 +178,33 @@ body {
     display: none !important;
   }
 }
+
+/* Mobile-only hint text */
+.summary-hint,
+.mobile-hint {
+  display: none;
+  color: #374151;
+  font-size: 10px;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+@media (max-width: 767px) {
+  .summary-hint,
+  .mobile-hint {
+    display: block;
+  }
+}
+
+.mobile-hint-inline {
+  display: none;
+  color: #374151;
+  font-size: 10px;
+  font-style: italic;
+}
+
+@media (max-width: 767px) {
+  .mobile-hint-inline {
+    display: inline;
+  }
+}
