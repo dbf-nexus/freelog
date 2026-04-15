@@ -1,4 +1,4 @@
-import type { MonthData, Settings } from '../types'
+﻿import type { MonthData, Settings } from '../types'
 import { calcTimeHours } from '../hooks/useCalculations'
 import { countWorkingDaysRemaining } from '../hooks/useCalculations'
 import { getDaysInMonth } from '../utils/dateUtils'
@@ -74,7 +74,7 @@ export default function SummaryCards({ month, settings, data }: Props) {
   ]
 
   return (
-    <div className="grid grid-cols-5 gap-3 px-4 py-4">
+    <div className="grid grid-cols-3 gap-3 px-4 py-4 sm:grid-cols-5">
       {cards.map(c => (
         <div
           key={c.label}
