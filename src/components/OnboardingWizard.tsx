@@ -224,6 +224,10 @@ export default function OnboardingWizard({ onComplete }: Props) {
                 </button>
               ))}
             </div>
+            <p className="text-labels/70 text-xs leading-relaxed">
+              A shift is one block of work — e.g. 9am to 5pm.
+              If you take a long break and come back, that is two shifts.
+            </p>
           </div>
         )}
 
