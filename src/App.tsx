@@ -7,6 +7,7 @@ import OnboardingWizard from './components/OnboardingWizard'
 import MainView from './components/MainView'
 import ToastContainer from './components/Toast'
 import InstallBanner from './components/InstallBanner'
+import { triggerBackupDownload } from './utils/backup'
 import type { Settings } from './types'
 
 // Lazy-loaded to keep initial bundle small
@@ -39,6 +40,20 @@ function App() {
       daysAgo = Math.floor(diff / (1000 * 60 * 60 * 24))
     }
 
+    // Auto-backup on Mondays when enabled
+    const autoEnabled = localStorage.getItem('freelog_auto_backup_enabled') === 'true'
+    const today = new Date()
+    const isMonday = today.getDay() === 1
+    const alreadyRanToday =
+      localStorage.getItem('freelog_auto_backup_ran') === today.toDateString()
+
+    if (autoEnabled && isMonday && !alreadyRanToday) {
+      triggerBackupDownload()
+      localStorage.setItem('freelog_auto_backup_ran', today.toDateString())
+      addToast('Auto-backup downloaded — Monday backup complete.')
+      return
+    }
+
     if (daysAgo < 0 || daysAgo >= 7) {
       const msg = daysAgo < 0
         ? 'Back up your data — you\'ve never backed up.'
@@ -50,20 +65,7 @@ function App() {
           action: {
             label: 'Back up now',
             onClick: () => {
-              const backup = {
-                freelog_settings: JSON.parse(localStorage.getItem('freelog_settings') || 'null'),
-                freelog_data: JSON.parse(localStorage.getItem('freelog_data') || '{}'),
-                freelog_favourites: JSON.parse(localStorage.getItem('freelog_favourites') || '{}'),
-              }
-              const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })
-              const url = URL.createObjectURL(blob)
-              const a = document.createElement('a')
-              const today = new Date().toISOString().slice(0, 10)
-              a.href = url
-              a.download = `freelog_backup_${today}.json`
-              a.click()
-              URL.revokeObjectURL(url)
-              localStorage.setItem('freelog_backup_date', new Date().toISOString())
+              triggerBackupDownload()
               addToast('Backup exported')
             },
           },

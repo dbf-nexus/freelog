@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import type { Settings, Activity, MonthData, MonthFavourites } from '../types'
 import { getMonthName } from '../utils/dateUtils'
+import { triggerBackupDownload } from '../utils/backup'
 import { InfoIcon } from './Tooltip'
 
 const COLOUR_PRESETS = [
@@ -148,21 +149,18 @@ export default function SettingsPanel({
 
   // --- Data: Export backup ---
   const exportBackup = () => {
-    const backup = {
-      freelog_settings: JSON.parse(localStorage.getItem('freelog_settings') || 'null'),
-      freelog_data: JSON.parse(localStorage.getItem('freelog_data') || '{}'),
-      freelog_favourites: JSON.parse(localStorage.getItem('freelog_favourites') || '{}'),
-    }
-    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    const today = new Date().toISOString().slice(0, 10)
-    a.href = url
-    a.download = `freelog_backup_${today}.json`
-    a.click()
-    URL.revokeObjectURL(url)
-    localStorage.setItem('freelog_backup_date', new Date().toISOString())
+    triggerBackupDownload()
     onToast('Backup exported')
+  }
+
+  // --- Data: Auto-backup toggle ---
+  const [autoBackup, setAutoBackup] = useState(
+    () => localStorage.getItem('freelog_auto_backup_enabled') === 'true',
+  )
+  const toggleAutoBackup = () => {
+    const next = !autoBackup
+    setAutoBackup(next)
+    localStorage.setItem('freelog_auto_backup_enabled', String(next))
   }
 
   // --- Data: Restore ---
@@ -484,6 +482,33 @@ export default function SettingsPanel({
           <section>
             <h3 className={sectionTitle}>Data</h3>
             <div className="space-y-3">
+              <button
+                type="button"
+                onClick={toggleAutoBackup}
+                className="w-full text-left p-3 rounded-lg border border-surface-elevated hover:border-labels transition-colors flex items-start gap-3"
+              >
+                <span
+                  aria-hidden
+                  className={`mt-0.5 w-10 h-6 rounded-full flex-shrink-0 relative transition-colors ${
+                    autoBackup ? 'bg-gold-solid' : 'bg-surface-elevated'
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all ${
+                      autoBackup ? 'left-[18px]' : 'left-0.5'
+                    }`}
+                  />
+                </span>
+                <span className="flex-1">
+                  <span className={`block text-sm font-medium ${autoBackup ? 'text-white' : 'text-body-text'}`}>
+                    Auto-backup every Monday
+                  </span>
+                  <span className="block text-labels text-xs mt-1 leading-relaxed">
+                    A backup file will download automatically when you open Freelog on Mondays. Keep it somewhere safe.
+                  </span>
+                </span>
+              </button>
+
               <button onClick={exportBackup} className={`w-full ${btnGold}`}>
                 Export backup
               </button>
